@@ -189,23 +189,103 @@ T表示确定的类型，?表示不确定的类型。
 
 ## 7.1. List
 
-### 7.1.1. ArrayList和Vector的区别
+### 7.1.1. ArrayList和LinkedList的区别
 
+1. 数据结构实现：ArrayList的底层数据结构是动态数组，LinkedList的底层数据结构是双向链表。
+2. 随机访问效率：ArrayList的随机访问效率比LinkedList高，因为ArrayList可以随机访问，而LinkedList只能从前向后或从后向前遍历。
+3. 插入删除效率：在非首尾插入删除元素时，LinkedList的插入删除效率比ArrayList高，因为ArrayList每次插入删除都需要移动其它的元素，而LinkedList只需要改变指针的指向。
+4. 内存空间占用：LinkedList比ArrayList更占内存空间，因为LinkedList的结点除了存储数据，还要存储其直接前驱结点和直接后继结点的引用。
+5. ArrayList和LinkedList都是不同步、非线程安全的。
 
+### 7.1.ArrayList和Vector的区别
 
-### 7.1.2. ArrayList和LinkedList的区别
+二者都实现了List接口，都是有序结合
 
-
+1. 线程安全：ArrayList是非线程安全的，Vector是线程安全的，因为Vector内部的方法都经过synchronized关键字修饰。
+2. 性能：ArrayList的性能要优于Vector，因为Vector的同步操作需要耗费额外的时间资源。
+3. 扩容：ArrayList每次扩容50%，Vector每次扩容1倍。
 
 ## 7.2. Map
 
-### 7.2.1. HashMap和Hashtable的区别
+### 7.2.1. HashMap和HashTable的区别
 
+1. 线程安全： **HashMap**是非线程安全的，**HashTable** 是线程安全的，因为HashTable内部的方法都经过**synchronized**关键字修饰。
 
+2. 性能：HashMap的性能要优于HashTable，因为HashTable的**同步操作**需要耗费额外的时间资源。
+
+3. 对null的支持：
+
+   在**HashMap**中，null 可以作为key，但只能有一个，可以有一个或多个key对应的value为null。
+
+   在**HashTable**中，只要put进一个key或value为null，直接抛**NullPointerException**。
+
+4. 初始容量和每次扩容：
+
+   创建时不指定大小，**HashTable**默认大小为11，每次扩容后大小变为原来的2n+1。**HashMap**默认大小为16，每次扩容后大小变为原来的2倍。
+
+   创建时指定大小，**HashTable**直接使用给定大小，**HashMap**会扩充为2的幂次方大小。
+
+5. 底层数据结构：
+
+   HashTable的底层数据结构是**数组+链表(拉链法)**
+
+   HashMap的底层数据结构是**Node数组+链表/红黑树(jdk1.8**)。当**链表长度**大于阈值(默认**8**)，**数组长度**大于64，链表转换为红黑树，为了防止链表长度过长，影响搜索速度。同步时，只会锁住Node数组中链表或红黑树的**首结点**。
+
+### 7.2.2. HashMap内部细节
+
+1. hash值计算方式
+
+   1次异或运算+1次位运算(hash ^ (hash >>> 16))，即高16位与低16位异或异或，目的是减少碰撞。
+
+2. 数组(桶)下标计算方式
+
+   index = (table.length - 1) & hash
+
+### 7.2.3. ConcurrentHashMap
+
+1. 并发安全：Node + CAS + Synchronized来保证并发安全进行实现，synchronized只锁定当前链表或红黑二叉树的首节点
 
 ## 7.3. Set
 
-### 7.3.1. HashSet和HashMap的关系
+### 7.3.1. HashSet
+
+HashSet底层使用HashMap存储元素，HashSet加入的元素，内部会存储在HashMap的key上，value统一存储常量PRESENT。因此HashSet与HashMap的特性差不多。
+
+# 8. IO
+
+## 8.1. BIO
+
+BIO是**同步阻塞式**IO，以流的方式处理数据，效率低，适合请求连接数少、架构固定的场景，系统资源消耗大。
+
+Java的基础IO类和Socket、ServerSocket类都是BIO。
+
+## 8.2. NIO
+
+NIO是对BIO的改进，是**同步非阻塞式**IO，以块的方式处理数据，效率高，适合请求连接数多、连接时间短的场景。
+
+NIO基于**通道(Channel)**和**缓冲区(Buffer)**进行数据操作，数据总是从通道读取到缓冲区中，或者从缓冲区中写到通道中。**Selector(选择器)**用于监听多个通道的事件（比如：连接请求，数据到达等），因此使用单个线程就可以监听多个客户端通道。
+
+1. Buffer
+
+   是一个容器，是一个特殊的**数组**，缓冲区内部内置了一些机制，能够**跟踪和记录**缓冲区的状态和变化。Channel提供从文件、网络读取数据的渠道，但是读取或写入的数据都**必须经由Buffer**。
+
+2. Channel
+
+   类似于 BIO 中的 stream，用来建立到目标（文件File，网络套接字Socket，硬件设备等）的一个连接，但是需要注意：BIO 中的 stream 是单向的，例如 FileInputStream 对象只能进行读取数据的操作，而 NIO 中的通道(Channel)是双向的，既可以用来进行读操作，也可以用来进行写操作。
+
+3. Selector
+
+   能够检测多个注册服务上的通道是否有**事件**发生，如果有事件发生，便可以获取到事件然后**针对每个事件进行相应的处理**。这样就可以使用单线程管理多个客户端连接，这样使得只有**真正的读写事件**发生时，才会调用函数进行读写。减少了系统的开销，并且不必为每一个连接都创建一个线程，不用去维护多个线程。
+
+## 8.3. AIO
+
+先由操作系统完成客户端的请求，再通知服务器去启动线程进行处理。适合请求连接数多、连接时间长的场景。
+
+## 8.4. NIO框架——Netty
+
+Netty是用Java编写的开源框架，内部使用NIO模型，提供异步的、事件驱动的网络应用程序框架和工具，用以快速开发高性能、高可靠性的网络服务器和客户端程序。
+
+
 
 
 

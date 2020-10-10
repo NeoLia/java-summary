@@ -19,3 +19,8 @@ Spring的IOC有两个实现，依赖注入(DI)和依赖查找(DS)。
 Spring的IOC容器负责创建对象、销毁对象、维护对象间的依赖关系。
 
 Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父子容器的关系。Spring的IOC容器是Spring MVC的IOC容器的父容器，子容器可以获取父容器的bean，但父容器不可以获取子容器的bean。
+
+## 1.4. 两个bean互相依赖
+
+两个bean之间互相依赖，为了防止出现依赖注入问题，必须使用setter来注入依赖。
+
