@@ -77,7 +77,25 @@
 
 因为JVM要求对象所占的内存大小为8bit的倍数，不满足条件会填满。
 
+## 3.3. 对象的创建过程
 
+## 3.4. 对象的访问方式
+
+1. 通过句柄访问
+
+   ![reference变量通过句柄访问对象](E:\study-summary\images\reference变量通过句柄访问对象.png)
+
+   优点：稳定
+
+   reference变量指向句柄池中的一个句柄，这个句柄指向堆中的对象（实例数据）和对象所属类信息（对象类型数据）。
+
+2. 通过直接指针访问
+
+   ![reference变量通过直接指针访问对象](E:\study-summary\images\reference变量通过直接指针访问对象.png)
+
+   优点：访问速度快，实现的JVM有HotSpot（最流行的JVM）。
+
+   reference变量指向堆中的
 
 # 4. 泛型
 
