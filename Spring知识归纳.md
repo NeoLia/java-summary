@@ -43,19 +43,19 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
 ## 3.1.1 组成部分
 
-1. EntityManager代理对象
+#### 3.1.1.1. EntityManager代理对象
 
-2. TransactionInterceptor事务切面（环绕切面）
+#### 3.1.1.2. TransactionInterceptor事务切面（环绕切面）
 
-   "before"时，调用TransactionManager方法，判断被调用的业务方法是在正在运行的事务上执行，还是创建一个新的独立事务并在新事务上执行。
+"before"时，调用TransactionManager方法，判断被调用的业务方法是在正在运行的事务上执行，还是创建一个新的独立事务并在新事务上执行。
 
-   "after"时，判断事务是被提交、回滚，还是继续运行。
+"after"时，判断事务是被提交、回滚，还是继续运行。
 
-3. TransactionalManager事务管理器
+#### 3.1.1.3. TransactionalManager事务管理器
 
-   （1）判断新的EntityManager是否应该被创建
+（1）判断新的EntityManager是否应该被创建
 
-   （2）判断是否开始新的事务
+（2）判断是否开始新的事务
 
 ## 3.1.2. 不生效的情况
 
@@ -64,6 +64,58 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 2. 同一个bean里，嵌套的public方法
 
    tips：通常在service方法或service类中使用，如果涉及到第三方资源的访问可能会消耗较长的时间，可以拆分出一个单独的service来访问。
+
+## 3.2. 事务传播机制(Propagation)
+
+### 3.2.1. 支持使用当前事务
+
+1. REQUIRED（默认）
+
+   如果当前事务不存在，则创建一个新事务。
+
+2. SUPPORTS
+
+   如果当前事务不存在，则不使用事务。
+
+3. MANDATORY
+
+   如果当前事务不存在，则抛出Exception。
+
+### 3.2.2.不支持使用当前事务
+
+1. REQUIRES_NEW
+
+   创建一个新事务，如果当前事务存在，则挂起当前事务。
+
+2. NOT_SUPPORT
+
+   无事务执行，如果当前事务存在，则挂起当前事务。
+
+3. NEVER
+
+   无事务执行，如果当前事务存在，则抛出Exception。
+
+4. NESTED
+
+   嵌套事务，如果当前事务存在，那么在嵌套的事务中执行。如果当前事务不存在，则表现跟REQUIRED一样。
+
+## 3.3. 事务隔离级别
+
+### 3.3.1. READ_UNCOMMITED
+
+脏读、不可重复读、幻读
+
+### 3.3.2. READ_COMMITED
+
+不可重复读、幻读
+
+### 3.3.3. REPEATABLE_READ
+
+幻读
+
+### 3.3.3. SERIALIZABLE
+
+
 
 # 4. AOP
 
