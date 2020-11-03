@@ -41,31 +41,40 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
 ## 3.1. 声明式事务管理@Transactional
 
-## 3.1.1 组成部分
+### 3.1.1. 创建@Transactional方法代理对象的过程
 
-#### 3.1.1.1. EntityManager代理对象
+1. BeanPostProcessor、AnnotationAwareAspectJAutoProxyCreator.postProcessAfterInstantiation()
+2. BeanFactoryTransactionAttributeSourceAdvisor
 
-#### 3.1.1.2. TransactionInterceptor事务切面（环绕切面）
+### 3.1.2. 调用@Transactional方法的过程
 
-"before"时，调用TransactionManager方法，判断被调用的业务方法是在正在运行的事务上执行，还是创建一个新的独立事务并在新事务上执行。
+1. 调用@Transactional方法
 
-"after"时，判断事务是被提交、回滚，还是继续运行。
+2. 调用代理对象方法
 
-#### 3.1.1.3. TransactionalManager事务管理器
+   CglibAopProxy#**DynamicAdvisedInterceptor**.intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy)
 
-（1）判断新的EntityManager是否应该被创建
+   或者
 
-（2）判断是否开始新的事务
+   JdkDynamicAopProxy.invoke(Object proxy, Method method, Object[] args)
 
-## 3.1.2. 不生效的情况
+3. 内部调用**TransactionInterceptor**.invoke(MethodInvocation invocation)，TransactionInterceptor extends TransactionAspectSupport
 
-1. private方法
+4. 内部调用**TransactionAspectSupport**.invokeWithinTransaction(Method method, @Nullable Class<?> targetClass, TransactionAspectSupport.InvocationCallback invocation)：是否创建事务，开始事务、执行目标方法、提交/回滚事务
 
-2. 同一个bean里，嵌套的public方法
+## 3.1.2. 注意事项
 
-   tips：通常在service方法或service类中使用，如果涉及到第三方资源的访问可能会消耗较长的时间，可以拆分出一个单独的service来访问。
+1. @Transactional只能使用在public方法上
 
-## 3.2. 事务传播机制(Propagation)
+2. 自调用问题：
+
+   （1）没有@Transactional注解的方法，其内部调用另一个@Transactional的方法时，不执行事务。
+   
+   （2）外部方法有@Transactional，其内部调用的另一方法没有@Transactional，外部方法回滚，内部调用方法也会回滚。
+   
+   （3）外部方法决定内部调用方法。
+
+## 3.2. 事务传播类型(Propagation)
 
 ### 3.2.1. 支持使用当前事务
 
@@ -182,3 +191,11 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 10. Proxy Object代理对象
 
     目标对象被通知插入后的对象，通常目标对象和代理对象都实现了共同的接口或父类。
+
+## 4.3. Spring AOP的实现
+
+### 4.3.1. CglibAopProxy
+
+1. CglibAopProxy$DynamicAdvisedInterceptor.intercept()
+
+### 4.3.1. JdkDynamicAopProxy
