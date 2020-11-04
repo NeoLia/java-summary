@@ -24,9 +24,30 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
 两个bean之间互相依赖，为了防止出现依赖注入问题，必须使用setter来注入依赖。
 
-# 2. 装配bean
+# 2. Spring Bean
 
-## 2.1. @Autowired和@Resource
+## 2.1. IOC Container的启动初始化过程
+
+
+
+## 2.3. 实例化Bean的方式
+
+1. 构造器
+2. 静态工厂方法
+3. 实例工厂方法
+
+## 2.2. 创建Bean的过程
+
+## 2.2. 依赖注入
+
+### 2.2.1. 依赖注入的方式
+
+1. 构造器
+2. setter方法
+3. 静态工厂方法
+4. 实例工厂方法
+
+### 2.2.2. @Autowired和@Resource的区别
 
 相同点：
 
@@ -35,7 +56,8 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 区别：
 
 1. @Autowired属于Spring；@Resource属于JavaEE。
-2. @Autowired默认按bean类型装配，当Spring上下文中有多个同类型的bean，需要与@Qualify结合使用，指定bean的id；@Resource默认按bean名称装配（通过指定name属性，不指定则按属性名称找），找不到则按bean类型装配。
+2. @Autowired可以修饰constructor，@Resource不可以修饰constructor。
+3. @Autowired默认按bean类型装配，当Spring上下文中有多个同类型的bean，需要与@Qualify结合使用，指定bean的id；@Resource默认按bean名称装配（通过指定name属性，不指定则按属性名称找），找不到则按bean类型装配。
 
 # 3. Spring事务
 
@@ -43,8 +65,10 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
 ### 3.1.1. 创建@Transactional方法代理对象的过程
 
-1. BeanPostProcessor、AnnotationAwareAspectJAutoProxyCreator.postProcessAfterInstantiation()
-2. BeanFactoryTransactionAttributeSourceAdvisor
+1. BeanPostProcessor
+2. AnnotationAwareAspectJAutoProxyCreator extends BeanPostProcessor
+3. AnnotationAwareAspectJAutoProxyCreator.postProcessAfterInstantiation()， return 代理对象
+4. BeanFactoryTransactionAttributeSourceAdvisor
 
 ### 3.1.2. 调用@Transactional方法的过程
 
