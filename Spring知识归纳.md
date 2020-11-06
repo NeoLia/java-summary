@@ -6,48 +6,55 @@
 
 IOC(Inverse of Control)——控制反转，指的是将对象的创建、销毁、装配、依赖关系的维护等从代码转移到外部容器上，使代码从管理对象的工作中解耦出来，是一种设计理念。
 
-## 1.2. Spring IOC的实现
+## 1.2. Spring IOC的实现方式
 
-Spring的IOC有两个实现，依赖注入(DI)和依赖查找(DS)。
+Spring的IOC有两个实现方式，依赖注入(DI)和依赖查找(DS)。
 
-依赖注入：@Autowired, @Resource，setter，constructor，静态工厂方法、动态工厂方法
+依赖注入：setter方法，constructor，静态工厂方法、动态工厂方法
 
-依赖查找：BeanFactory.getBean("")、@Resource
+依赖查找：BeanFactory.getBean(String)
 
 ## 1.3. Spring IOC容器
+
+### 1.3.1. 简介
 
 Spring的IOC容器负责创建对象、销毁对象、维护对象间的依赖关系。
 
 Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父子容器的关系。Spring的IOC容器是Spring MVC的IOC容器的父容器，子容器可以获取父容器的bean，但父容器不可以获取子容器的bean。
 
-## 1.4. 两个bean互相依赖
+### 1.3.2. 初始化过程
 
-两个bean之间互相依赖，为了防止出现依赖注入问题，必须使用setter来注入依赖。
+## 1.4. 特殊情况
+
+### 1.4.1. 两个bean互相依赖
+
+两个bean之间互相依赖，为了防止出现依赖注入问题，必须使用setter方法来注入依赖。
 
 # 2. Spring Bean
 
-## 2.1. IOC Container的启动初始化过程
 
 
-
-## 2.3. 实例化Bean的方式
+## 2.2. 实例化Bean的方式
 
 1. 构造器
 2. 静态工厂方法
 3. 实例工厂方法
 
-## 2.2. 创建Bean的过程
+## 2.3. 依赖注入
 
-## 2.2. 依赖注入
-
-### 2.2.1. 依赖注入的方式
+### 2.3.1. 依赖注入的方式
 
 1. 构造器
 2. setter方法
 3. 静态工厂方法
 4. 实例工厂方法
 
-### 2.2.2. @Autowired和@Resource的区别
+### 2.3.2. 自动装配的配置方式
+
+1. 通过xml（显式装配）
+2. 通过注解@Autowired或@Resource（隐式装配）
+
+### 2.3.3. @Autowired和@Resource的区别
 
 相同点：
 
