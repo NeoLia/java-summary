@@ -66,6 +66,24 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 2. @Autowired可以修饰constructor，@Resource不可以修饰constructor。
 3. @Autowired默认按bean类型装配，当Spring上下文中有多个同类型的bean，需要与@Qualify结合使用，指定bean的id；@Resource默认按bean名称装配（通过指定name属性，不指定则按属性名称找），找不到则按bean类型装配。
 
+## 2.4. @Value
+
+1. 语法
+
+   @Value("${propertyName : defaultValue}")
+
+   @Value("#{obj.propertyName?: defaultValue}")
+
+2. 区别
+
+   (1)@Value("${propertyName : defaultValue}")
+
+   从加载到spring上下文的properties文件中读取数据
+
+   (2)@Value("#{obj.property ?: defaultValue}")
+
+   从加载到springIOC容器的Bean中读取数据
+
 # 3. Spring事务
 
 ## 3.1. 声明式事务管理@Transactional
