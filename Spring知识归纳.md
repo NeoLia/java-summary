@@ -48,7 +48,7 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
    （2）ApplicationContext比BeanFactory加入了更多对开发者有用的功能。BeanFactory的许多功能需要通过**编程**实现，而 ApplicationContext可以通过**配置**实现。BeanFactory主要面对Spring框架，ApplicationContext则为普通开发者所使用。
 
-#### 1.3.2.3. 原理
+#### 1.3.2.4. 原理
 
 ## 1.4. 特殊情况
 
