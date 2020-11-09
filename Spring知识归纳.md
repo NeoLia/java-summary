@@ -22,7 +22,33 @@ Spring的IOC容器负责创建对象、销毁对象、维护对象间的依赖�
 
 Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父子容器的关系。Spring的IOC容器是Spring MVC的IOC容器的父容器，子容器可以获取父容器的bean，但父容器不可以获取子容器的bean。
 
-### 1.3.2. 初始化过程
+### 1.3.2. Spring IOC初始化过程
+
+#### 1.3.2.1. 初始化IOC容器
+
+加载、解析配置信息
+
+#### 1.3.2.2. 实例化Bean
+
+实例化对象、装配依赖、生命周期回调动作
+
+#### 1.3.2.3. BeanFactory和ApplicationContext
+
+1. 简介
+
+   **BeanFactory**是Spring IOC的**核心接口**、也是**顶层接口**，定义了IOC的基本功能(getBean, getBeanProvider, containsBean, isSingleton, isPrototype, isTypeMatch, getType, getAliases)。
+
+   **ApplicationContext**是BeanFactory的子接口，继承BeanFactory的所有功能，并提供了许多有用的扩展功能，直接父接口是ListableBeanFactory。
+
+2. 区别
+
+   （1）因为**BeanFactory**采用**延迟加载**的方式实例化Bean，当第一次使用到某个Bean时才会实例化它，所以Spring IOC初始化启动时只初始化IOC容器，不会实例化Bean。好处是启动速度变快，内存消耗较小；坏处是不能在初始化启动时检查配置是否有问题。
+
+   ​         因为**ApplicationContext**采用**即时加载**的方式实例化Bean，所以在Spring初始化启动时会先初始化IOC容器，再实例化所有Bean。好处是能够给在初始化启动时检查配置是否有问题，坏处是启动速度变慢，内存消耗较大。
+
+   （2）ApplicationContext比BeanFactory加入了更多对开发者有用的功能。BeanFactory的许多功能需要通过**编程**实现，而 ApplicationContext可以通过**配置**实现。BeanFactory主要面对Spring框架，ApplicationContext则为普通开发者所使用。
+
+#### 1.3.2.3. 原理
 
 ## 1.4. 特殊情况
 
@@ -123,7 +149,7 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
    
    （3）外部方法决定内部调用方法。
 
-## 3.2. 事务传播类型(Propagation)
+## 3.2. 事务传播行为(Propagation)
 
 ### 3.2.1. 支持使用当前事务
 
@@ -137,7 +163,7 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
 3. MANDATORY
 
-   如果当前事务不存在，则抛出Exception。
+   如果当前事务不存在，则抛出异常。
 
 ### 3.2.2.不支持使用当前事务
 
