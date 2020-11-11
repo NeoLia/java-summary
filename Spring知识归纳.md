@@ -4,57 +4,62 @@
 
 ## 1.1. IOC是什么
 
-IOC(Inverse of Control)——控制反转，指的是将对象的创建、销毁、装配、依赖关系的维护等从代码转移到外部容器上，使代码从管理对象的工作中解耦出来，是一种设计理念。
+
+
+IOC(Inverse of Control)——控制反转，是一种设计理念。指的是将对象生命周期的管理（创建、销毁）和对象间依赖关系的维护（注入对象到另一个依赖它的对象）从代码（被注入对象）转移到IOC容器中去，将对象的管理维护工作从自己的代码中**解耦**出来。Bean（组件）之间的依赖关系由容器在应用系统**运行期**来决定。
+
+1. 传统编程中，一个对象通过new创建它依赖的对象，依赖的对象由**它自己**控制；在IOC中，一个对象从IOC容器中被动接受它依赖的对象，依赖的对象由**IOC容器**控制。
+
+2. 控制的东西是**对象**。
+3. 正转：一个对象主动创建它依赖的对象；反转：一个对象从IOC容器中被动接受它依赖的对象，IOC容器创建对象并注入到依赖它的对象中去。依赖对象的获取从**主动变为被动**。
+
+
 
 ## 1.2. Spring IOC的实现方式
 
-Spring的IOC有两个实现方式，依赖注入(DI)和依赖查找(DS)。
+Spring的IOC使用了两个实现方式，**依赖注入**(DI)和**依赖查找**(DS)。
 
-依赖注入：setter方法，constructor，静态工厂方法、动态工厂方法
+依赖注入：IOC容器自动将它管理的对象注入到需要的地方。如：setter,、constructor、静态工厂方法、动态工厂方法、~~接口实现注入~~
 
-依赖查找：BeanFactory.getBean(String)
+依赖查找：对象内部使用IOC容器的API获取它依赖的对象。如：BeanFactory.getBean(...)
 
-## 1.3. Spring IOC容器
+## 1.3. Spring IOC体系
 
-### 1.3.1. 简介
+### 1.3.1. Resource (I)
 
-Spring的IOC容器负责创建对象、销毁对象、维护对象间的依赖关系。
+资源的抽象，不同的实现代表不同的**资源访问策略**，如ClasspathResource、URLResource、FileSystemResource等
 
-Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父子容器的关系。Spring的IOC容器是Spring MVC的IOC容器的父容器，子容器可以获取父容器的bean，但父容器不可以获取子容器的bean。
+### 1.3.2. BeanFactory (I)
 
-### 1.3.2. Spring IOC初始化过程
+BeanFactory是Spring IOC容器的**核心接口**、也是**顶层接口**，定义了IOC容器的基本功能(getBean, getBeanProvider, containsBean, isSingleton, isPrototype, isTypeMatch, getType, getAliases)。
 
-#### 1.3.2.1. 初始化IOC容器
+### 1.3.3. ApplicationContext (I)
 
-加载、解析配置信息
+ApplicationContext是BeanFactory的子接口，继承BeanFactory的所有功能，并提供了许多有用的扩展功能，直接父接口是ListableBeanFactory。
 
-#### 1.3.2.2. 实例化Bean
+### 1.3.4. BeanDefinition (I)
 
-实例化对象、装配依赖、生命周期回调动作
+描述Spring Bean的对象。
 
-#### 1.3.2.3. BeanFactory和ApplicationContext
+### 1.3.5. BeanDefinitionReader (I)
 
-1. 简介
+读取Spring的配置文件的内容，将其转换为BeanDefinition。
 
-   **BeanFactory**是Spring IOC的**核心接口**、也是**顶层接口**，定义了IOC的基本功能(getBean, getBeanProvider, containsBean, isSingleton, isPrototype, isTypeMatch, getType, getAliases)。
+### 1.3.6. BeanFactory和ApplicationContext的差别
 
-   **ApplicationContext**是BeanFactory的子接口，继承BeanFactory的所有功能，并提供了许多有用的扩展功能，直接父接口是ListableBeanFactory。
+1. 因为**BeanFactory**采用**延迟加载**的方式实例化Bean，当第一次使用到某个Bean时才会实例化它，所以Spring IOC初始化启动时只初始化IOC容器，不会实例化Bean。好处是启动速度快，内存消耗较小；坏处是不能在初始化启动时检查配置是否有问题。
+2. 因为**ApplicationContext**采用**即时加载**的方式实例化Bean，所以在Spring初始化启动时会先初始化IOC容器，再实例化所有Bean。好处是能够给在初始化启动时检查配置是否有问题，坏处是启动速度慢，内存消耗较大。
+3. ApplicationContext比BeanFactory加入了**更多**对开发者有用的**功能**。BeanFactory的许多功能需要通过**编程**实现，而 ApplicationContext可以通过**配置**实现。BeanFactory主要面对Spring框架，ApplicationContext则为普通开发者所使用。
 
-2. 区别
+## 1.4. 注意事项
 
-   （1）因为**BeanFactory**采用**延迟加载**的方式实例化Bean，当第一次使用到某个Bean时才会实例化它，所以Spring IOC初始化启动时只初始化IOC容器，不会实例化Bean。好处是启动速度变快，内存消耗较小；坏处是不能在初始化启动时检查配置是否有问题。
+### 1.4.1. 两个Bean互相依赖
 
-   ​         因为**ApplicationContext**采用**即时加载**的方式实例化Bean，所以在Spring初始化启动时会先初始化IOC容器，再实例化所有Bean。好处是能够给在初始化启动时检查配置是否有问题，坏处是启动速度变慢，内存消耗较大。
+两个Bean之间互相依赖，为了防止出现依赖注入问题，必须使用setter方法来注入依赖。
 
-   （2）ApplicationContext比BeanFactory加入了更多对开发者有用的功能。BeanFactory的许多功能需要通过**编程**实现，而 ApplicationContext可以通过**配置**实现。BeanFactory主要面对Spring框架，ApplicationContext则为普通开发者所使用。
+### 1.4.2. Spring的IOC容器与Spring MVC的IOC容器
 
-#### 1.3.2.4. 原理
-
-## 1.4. 特殊情况
-
-### 1.4.1. 两个bean互相依赖
-
-两个bean之间互相依赖，为了防止出现依赖注入问题，必须使用setter方法来注入依赖。
+Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父子容器的关系。Spring的IOC容器是Spring MVC的IOC容器的父容器，子容器可以获取父容器的Bean，但父容器不可以获取子容器的Bean。
 
 # 2. Spring Bean
 
