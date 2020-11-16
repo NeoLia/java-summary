@@ -304,9 +304,9 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
 ### 4.4.2. JdkDynamicAopProxy
 
-# Spring实现涉及的原理
+# 5. Spring涉及的设计模式
 
-1. 工厂模式（抽象工厂模式、工厂方法模式）：BeanFactory、ApplicationContext
-2. 代理模式：AOP
-3. 模板方法：JdbcTemplate
-4. Java反射
+1. 工厂模式（抽象工厂模式）：BeanFactory、ApplicationContext
+2. 单例模式：Bean的默认作用域为Singleton
+3. 代理模式：Spring AOP使用了Cglib动态代理技术(CglibAopProxy)和JDK动态代理技术(JdkDynamicAopProxy)
+4. 模板方法：JdbcTemplate, RestTemplate, JmsTemplate, JpaTemplate
