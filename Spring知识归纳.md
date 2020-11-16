@@ -256,9 +256,9 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
 7. Weave织入
 
-   根据PointCut将Advice插入到指定的JointCut并创建代理对象的过程，可以发生在编译时、类加载时或运行时。
+   根据PointCut将Advice插入到指定的JointCut并创建代理对象的过程，可以发生在**编译时、加载时或运行时**。
 
-   发生在编译时，需要有支持AOP的编译器；发生在类加载时，需要有支持AOP的类加载器；发生在运行时，直接通过反射和动态代理机制实现。
+   发生在**编译时**，需要有支持AOP的编译器(AspectJ)；发生在**加载时**，需要有支持AOP的类加载器；发生在**运行时**，直接通过**反射**和**动态代理**机制实现。
 
 8. Introduction引入
 
@@ -272,10 +272,41 @@ Spring的IOC容器和Spring MVC的IOC容器不是同一个容器，但存在父�
 
     目标对象被通知插入后的对象，通常目标对象和代理对象都实现了共同的接口或父类。
 
-## 4.3. Spring AOP的实现
+## 4.3. Advice执行顺序
 
-### 4.3.1. CglibAopProxy
+### 4.3.1. 同一Aspect，不同Advice
+
+1. around before => before => target method => around after => after => after returning
+2. around before => before => target method => around after => after => after throwing
+
+### 4.3.2. 不同Aspect，不同Advice
+
+1. 先确定Aspect的优先级
+
+2. **高优先级**Aspect的Advice先执行入操作入栈（Around Before, Before），低优先级Aspect的Advice随后
+
+3. **低优先级**Aspect的Advice限制性出操作出栈(Around After, After, After Returning / After Throwing)，高优先级Aspect的Advice随后
+
+   （先入后出）
+
+### 4.3.3. 同一Aspect，同一Advice
+
+"同一Aspect，相同Advice的执行顺序"并不能直接确定，而且 **@Order** 在Advice方法上也无效，但是有如下两种变通方式：
+
+1. 将两个 Advice 合并为一个 Advice，那么执行顺序就可以通过代码控制了
+2. 将两个 Advice 分别抽离到各自的 Aspect 内，然后为 aspect 指定执行顺序
+
+## 4.4. Spring AOP的实现
+
+### 4.4.1. CglibAopProxy
 
 1. CglibAopProxy$DynamicAdvisedInterceptor.intercept()
 
-### 4.3.1. JdkDynamicAopProxy
+### 4.4.2. JdkDynamicAopProxy
+
+# Spring实现涉及的原理
+
+1. 工厂模式（抽象工厂模式、工厂方法模式）：BeanFactory、ApplicationContext
+2. 代理模式：AOP
+3. 模板方法：JdbcTemplate
+4. Java反射
