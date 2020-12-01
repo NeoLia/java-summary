@@ -33,11 +33,11 @@
 
 2. 状态
 
-   对象的数据，实例域/实例变量/成员变量
+   对象的数据，实例域/实例变量/成员变量。
 
 3. 行为
 
-   对数据的操作，实例方法/实例函数
+   对数据的操作，实例方法。
 
 ## 2.2.  对象的组成
 
@@ -57,7 +57,7 @@
    2. 轻量级锁：主要保存的是指向轻量级锁的指针
    3. 重量级锁：主要保存的是指向重量级锁的指针
 
-2. 指向Class的指针
+2. 类型指针
 
    该指针指向存储在方法区/元空间(since JDK1.8)中的对象所属的类信息。
 
@@ -75,17 +75,17 @@
 
 因为JVM要求对象所占的内存大小为8bit的倍数，不满足条件会填满。
 
-## 2.3. 对象的内存结构
+## 2.3. 类和对象在内存中的形式
 
-类——Klass(InstanceKlass)
+类——Klass(InstanceKlass)，描述类元数据，一个类在内存中对应一个Klass对象。
 
-对象——Oop(Ordinary object pointer)
+对象——Oop(Ordinary object pointer)，描述实例对象，一个实例对象在内存中对应一个OopDesc对象。
 
 ## 2.4. 对象的访问方式
 
 1. 通过句柄访问
 
-   ![reference变量通过句柄访问对象](E:\study-summary\images\reference变量通过句柄访问对象.png)
+   ![reference变量通过句柄访问对象](E:\study-summary\image\reference变量通过句柄访问对象.png)
 
    优点：稳定
 
@@ -93,7 +93,7 @@
 
 2. 通过直接指针访问
 
-   ![reference变量通过直接指针访问对象](E:\study-summary\images\reference变量通过直接指针访问对象.png)
+   ![reference变量通过直接指针访问对象](E:\study-summary\image\reference变量通过直接指针访问对象.png)
 
    优点：访问速度快，实现的JVM有HotSpot（最流行的JVM）。
 

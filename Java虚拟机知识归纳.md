@@ -2,7 +2,7 @@
 
 # 1. JMM示意图
 
-![Java内存模型](E:\study-summary\images\Java内存模型.png)
+![Java内存模型](E:\study-summary\image\Java内存模型.png)
 
 # 2. 类和对象
 
